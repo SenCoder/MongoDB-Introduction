@@ -26,14 +26,36 @@
     
 \end{frame}
 
-\section{Install}
-\begin{frame}
-    
+\section{Data Model}
+\begin{frame}{Concepts}
+\begin{itemize}
+    \item Documents
+    \item Collections
+    \item Database
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Data Types}
+    \begin{itemize}
+        \item null
+        \item bool
+        \item NumberInt, NumberLong
+        \item String
+        \item Date
+        \item Array
+        \item Embedded Document
+        \item \_id and ObjectId
+        \item BinData
+    \end{itemize}
 \end{frame}
 
 \section{Working with Data}
-\begin{frame}{Insert}
+\begin{frame}{Mongo Shell}
     
+\end{frame}
+
+\begin{frame}{Insert}
+
 \end{frame}
 
 \begin{frame}{Delete}
@@ -48,24 +70,54 @@
     
 \end{frame}
 
-\section{Python and MongoDB}
+\section{Advanced Queries}
 \begin{frame}
+    
+\end{frame}
+
+\section{Python and MongoDB}
+\begin{frame}{Python and MongoDB}
 
 \end{frame}
 
 \section{Golang and MongoDB}
-\begin{frame}{mgo}
-    
+\begin{frame}{Golang and MongoDB}
+
 \end{frame}
 
 \section{GridFS}
 \begin{frame}{GridFS}
-    
-\end{frame}
+GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16 MB.
 
-\section{Advanced Queries}
-\begin{frame}
-    
+\vspace{0.04\textheight}
+
+\begin{minipage}[t]{0.3\textwidth}
+\includegraphics[width=\textwidth]{golang}
+\end{minipage}
+
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+\includegraphics[width=\textwidth]{golang}
+\end{minipage}
+
+\vfill
+\begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{golang}
+\end{minipage}
+
+\hfill
+\begin{minipage}[t]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{golang}
+\end{minipage}
+
+\begin{block}{~}
+Instead of storing a file in a single document, GridFS divides the file into parts, or chunks, and stores each chunk as a separate document. By default, GridFS uses a chunk size of 255 kB; that is, GridFS divides a file into chunks of 255 kB with the exception of the last chunk.
+\end{block} 
+
+\begin{block}{~}
+    GridFS uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
+\end{block}
+
 \end{frame}
 
 \section{Database Administration}
