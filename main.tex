@@ -1,12 +1,18 @@
 \documentclass{beamer}
 
-%\usepackage[hyperref, UTF8]{ctex}
 \usepackage{fancyhdr}
 \usepackage[quiet]{fontspec}
 \usepackage{tikz}
 \usepackage{almslides}
 \usepackage{moresize}
 
+\usetikzlibrary{chains,decorations.pathmorphing,positioning,fit}
+\usetikzlibrary{decorations.shapes,calc,backgrounds}
+\usetikzlibrary{decorations.text,matrix}
+\usetikzlibrary{arrows,shapes.geometric,shapes.symbols,scopes}
+\usetikzlibrary{mindmap}
+
+\setmonofont{Monaco}
 
 \title{A Glance at MongoDB}
 \author{Sheng Yuan}
@@ -14,6 +20,7 @@
 \begin{document}
     
 \begin{frame}
+	\centering\includegraphics[width=0.7\textwidth]{mongodb-logo.png}
     \titlepage
 \end{frame}
 
@@ -22,36 +29,118 @@
 \end{frame}
 
 \section{Introduction}
-\begin{frame}
+\begin{frame}{Introduction}
+	\begin{block}{Document Database}
+		A record in MongoDB is a document, which is a data structure composed of field and value pairs. MongoDB documents are similar to JSON objects. The values of fields may include other documents, arrays, and arrays of documents.
+	\end{block}
+	\begin{block}{Key Features}
+		\begin{itemize}
+			\item High Performance
+			\item Rich Query Language
+			\item High Availability
+			\item Horizontal Scalability
+			\item Support for Multiple Storage Engines
+		\end{itemize}
+		
+	\end{block}
     
 \end{frame}
 
 \section{Data Model}
 \begin{frame}{Concepts}
-\begin{itemize}
-    \item Documents
-    \item Collections
-    \item Database
-\end{itemize}
+
+\begin{minipage}[t]{0.4\textwidth}
+	\begin{Alms*}
+		> Documents \\
+		> Collections \\
+		> Database \\
+		
+%		\A{| Mongodb} \A{| MySql} \\
+%		\A{| Document} \A{| Row} \\
+%		\A{| Field} \A{| Column} \\
+%		\A{| Collection} \A{| Table}\\
+%		\A{| Database} \A{| Database}\\
+	\end{Alms*}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.6\textwidth}
+	\scriptsize
+	\begin{Alms*}
+		> \K{show} \V{dbs} \\
+		admin \qquad 0.000GB\\
+		local \qquad 0.000GB\\
+		firebase \,0.001GB\\
+		> \K{use} \V{firebase} \\
+		switched to db firebase \\
+		> \K{show} \V{collections} \\
+		users \\
+		models \\
+		projects \\
+		tasks \\
+		> \V{db}.\V{users}.\V{find}().\V{pretty}() \\
+		\{ \NI
+		"\_id":ObjectId, \\
+		"email":"liueh@tcl.com", \\
+		"role":"admin"
+		\ND \} \\
+		\{ \NI
+		"\_id":ObjectId, \\
+		"email":"yuansheng@tcl.com", \\
+		"role":"user"
+		\ND \}
+	\end{Alms*}
+\end{minipage}
+
+\end{frame}
+
+\begin{frame}{Concepts}
+	
 \end{frame}
 
 \begin{frame}{Data Types}
     \begin{itemize}
-        \item null
-        \item bool
-        \item NumberInt, NumberLong
+        \item Null
+        \item Boolean
+        \item Integer
+        \item Double
         \item String
         \item Date
         \item Array
         \item Embedded Document
-        \item \_id and ObjectId
+        \item ObjectId
         \item BinData
     \end{itemize}
 \end{frame}
 
 \section{Working with Data}
 \begin{frame}{Mongo Shell}
-    
+    The mongo shell is an interactive JavaScript interface to MongoDB. 
+    \begin{minipage}[t]{0.5\textwidth}
+    	\scriptsize
+    	\begin{Alms*}
+    		\$ mongo \\
+    		MongoDB shell version v3.4.3 \\
+    		> \K{show} \V{dbs} \\
+    		admin \qquad 0.000GB\\
+    		local \qquad 0.000GB\\
+    		firebase \,0.001GB\\
+    		> \K{use} \V{firebase} \\
+    		switched to db firebase \\
+    		> \K{show} \V{collections} \\
+    		users \\
+    		models \\
+    		projects \\
+    		tasks \\
+    		> \V{db}.\V{users}.\V{find}(\{\\
+    		"email":"liueh@tcl.com"\\
+    		\}).\V{pretty}() \\
+    		\{ \NI
+    		"\_id":ObjectId, \\
+    		"email":"liueh@tcl.com", \\
+    		"role":"admin"
+    		\ND \}
+    	\end{Alms*}
+    \end{minipage}
 \end{frame}
 
 \begin{frame}{Insert}
@@ -77,47 +166,66 @@
 
 \section{Python and MongoDB}
 \begin{frame}{Python and MongoDB}
-
+\begin{Alms*}
+	\T{int} \V{udp\_sendmsg}(\T{struct sock *}\V{sk},
+	\T{struct msghdr *}\V{msg}, \textrm{\ldots}) \\
+	\{ \NI
+	\vdots \\
+	\tikzanchor{lock 1}%
+	\only<8->{\highlight<8-9>{\V{lock\_sock}(\V{sk});} \\}%
+	\K{if} \highlight<6-8>{(\V{unlikely}(\V{sk}$→$\V{pending}))} \{ \NI
+	\highlight<5>{
+		\CCOM{Socket is already corked while preparing it} \\
+		\CCOM{\ldots\,which is an evident application bug. --ANK}
+	} \\
+	\only<9->{\highlight<9>{\V{release\_sock}(\V{sk});} \\}%
+	\V{LIMIT\_NETDEBUG}(\V{KERN\_DEBUG} \S{udp cork app bug 2}); \\
+	\highlight<6>{\K{return} -\D{EINVAL};}
+	\ND\} \\[4pt]
+	\tikzanchor{lock 2}%
+	\only<-7>{\highlight<2,7>{\V{lock\_sock}(\V{sk});} \\}%
+	\highlight<3>{%
+		\V{ret} = \V{ip\_append\_data}(\V{sk}, \V{msg}$→$\V{msg\_iov},
+		\V{ulen}, \textrm{\ldots});} \\
+	\vdots \\
+	\highlight<4>{\V{release\_sock}(\V{sk});} \\
+	\K{return} \V{ret};
+	\ND\}
+\end{Alms*}
 \end{frame}
 
 \section{Golang and MongoDB}
 \begin{frame}{Golang and MongoDB}
 
+\vspace{0.04\textheight}
 \end{frame}
 
 \section{GridFS}
 \begin{frame}{GridFS}
-GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16 MB.
+	GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16 MB.
+	\vspace{0.05\textheight}
+	
+	\begin{minipage}[t]{0.45\textwidth}
+		%\includegraphics[width=\linewidth]{golang}
+		Instead of storing a file in a single document, GridFS divides the file into parts, or chunks, and stores each chunk as a separate document. By default, GridFS uses a chunk size of 255 kB; that is, GridFS divides a file into chunks of 255 kB with the exception of the last chunk.
+	\end{minipage}%
+	\hfill
+	\begin{minipage}[t]{0.45\textwidth}
+		\scriptsize
+		\begin{Alms*}
+		\{ \NI
+			"email":"yuansheng@tcl.com", \\
+			"role":"admin"
+		\ND \}
+		\end{Alms*}
+	\end{minipage}
+\end{frame}
 
-\vspace{0.04\textheight}
-
-\begin{minipage}[t]{0.3\textwidth}
-\includegraphics[width=\textwidth]{golang}
-\end{minipage}
-
-\hfill
-\begin{minipage}[t]{0.3\textwidth}
-\includegraphics[width=\textwidth]{golang}
-\end{minipage}
-
-\vfill
-\begin{minipage}[t]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{golang}
-\end{minipage}
-
-\hfill
-\begin{minipage}[t]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{golang}
-\end{minipage}
-
-\begin{block}{~}
-Instead of storing a file in a single document, GridFS divides the file into parts, or chunks, and stores each chunk as a separate document. By default, GridFS uses a chunk size of 255 kB; that is, GridFS divides a file into chunks of 255 kB with the exception of the last chunk.
-\end{block} 
-
-\begin{block}{~}
-    GridFS uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
-\end{block}
-
+\begin{frame}{GridFS}
+	\begin{minipage}[t]{\textwidth}
+		%\includegraphics[width=\linewidth]{golang}
+		GridFS uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
+	\end{minipage}
 \end{frame}
 
 \section{Database Administration}
