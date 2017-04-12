@@ -20,7 +20,7 @@
 \begin{document}
     
 \begin{frame}
-	\centering\includegraphics[width=0.7\textwidth]{mongodb-logo.png}
+	\centering\includegraphics[width=0.7\textwidth]{MongoDB-Logo.png}
     \titlepage
 \end{frame}
 
@@ -194,12 +194,6 @@
 \end{Alms*}
 \end{frame}
 
-\section{Golang and MongoDB}
-\begin{frame}{Golang and MongoDB}
-
-\vspace{0.04\textheight}
-\end{frame}
-
 \section{GridFS}
 \begin{frame}{GridFS}
 	GridFS is a specification for storing and retrieving files that exceed the BSON-document size limit of 16 MB.
@@ -213,33 +207,78 @@
 	\begin{minipage}[t]{0.45\textwidth}
 		\scriptsize
 		\begin{Alms*}
-		\{ \NI
-			"email":"yuansheng@tcl.com", \\
-			"role":"admin"
-		\ND \}
+		 \$ \K{mongofiles} -d=test \K{list}\\
+         \$ \K{mongofiles} \K{put} <filename>\\
+         \$ \K{mongofiles} \K{get} <filename>\\
+         \$ \K{mongofiles} \K{delete} <filename>\\
+         \$ \K{mongofiles} \K{search} <filename>\\
+         \$ \K{mongofiles} \K{get\_id} <\_id>\\
+         \$ \K{mongofiles} \K{delete\_id} <\_id>\\
 		\end{Alms*}
 	\end{minipage}
 \end{frame}
 
 \begin{frame}{GridFS}
 	\begin{minipage}[t]{\textwidth}
-		%\includegraphics[width=\linewidth]{golang}
 		GridFS uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
 	\end{minipage}
+    
+    \begin{block}{fs.files}
+        \scriptsize
+        \begin{Alms*}
+            \{ \NI
+                "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
+                "chunkSize" : 261120, \\
+                "uploadDate" : ISODate("2017-04-11T11:15:52.551Z"), \\
+                "length" : 237406045, \\
+                "md5" : "2166f11cee1bd4b2c31fc429524fdae0", \\
+                "filename" : "The.Big.Bang.Theory.S01E01.mkv" \\
+            \ND \}
+        \end{Alms*}
+    \end{block}
+    
+    \begin{block}{fs.chunks}
+        \scriptsize
+        \begin{Alms*}
+            \{ \NI
+            "\_id" : ObjectId("58ecbae81d41c81b3962e857"), \\
+            "files\_id" : ObjectId("58ecbae81d41c81b3962e856"), \\
+            "n" : 0, \\
+            "data" : BinData("...")
+            \ND \}
+         \end{Alms*}
+    \end{block}
+    
+\end{frame}
+
+\begin{frame}{When to Use GridFS}
+    \begin{itemize}
+        \item If your filesystem limits the number of files in a directory, you can use GridFS to store as many files as needed.
+        \item When you want to access information from portions of large files without having to load whole files into memory, you can use GridFS to recall sections of files.
+        \item When you want to keep your files and metadata automatically synced and deployed across a number of systems and facilities, you can use GridFS.
+        \item \textcolor{red}{Do not use GridFS if you need to update the content of the entire file atomically. As an alternative you can store multiple versions of each file and specify the current version of the file in the metadata. }
+        \item \textcolor{red}{If your files are all smaller the 16 MB BSON Document Size limit, consider storing the file manually within a single document instead of using GridFS.}
+    \end{itemize}
 \end{frame}
 
 \section{Database Administration}
-\begin{frame}
+\begin{frame}{Database Administration}
+\subsection{Backup and Restore}
+The MongoDB backup utility is called mongodump; this utility is supplied as part of the standard distribution.
+\end{frame}
+
+\subsection{Protect your Server with  Authentication}
+\begin{frame}{Database Administration}
     
 \end{frame}
 
 \section{Optimization}
-\begin{frame}
+\begin{frame}{Optimization}
     
 \end{frame}
 
-\section{MonogDB and MySQL}
-\begin{frame}
+\section{MonogDB vs MySQL}
+\begin{frame}{MonogDB vs MySQL}
     
 \end{frame}
 
