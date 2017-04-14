@@ -175,6 +175,7 @@
 
 \section{Python and MongoDB}
 \begin{frame}{Python and MongoDB}
+\scriptsize
 \begin{Alms*}
 	\T{int} \V{udp\_sendmsg}(\T{struct sock *}\V{sk},
 	\T{struct msghdr *}\V{msg}, \textrm{\ldots}) \\
@@ -229,7 +230,7 @@
 
 \begin{frame}{GridFS}
 	\begin{minipage}[t]{\textwidth}
-		GridFS uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
+		GridFS\cite{Chodorow2013MongoDB} uses\cite{mongodb} two collections to store files. One collection stores the file chunks, and the other stores file metadata.
 	\end{minipage}
     
     \begin{block}{fs.files}
@@ -270,6 +271,23 @@
     \end{itemize}
 \end{frame}
 
+\section{Replication}
+\subsection{Why Replication}
+\begin{frame}{Why Replication}
+    A replica set in MongoDB is a group of mongod processes that maintain the same dataset. With multiple copies of data on different database servers, replication provides a level of fault tolerance against the loss of a single database server.
+\end{frame}
+
+\subsection{How Replication Works}
+\begin{frame}{How Replication Works}
+    
+\end{frame}
+
+\subsection{Replica Set Administration}
+\begin{frame}{Replica Set Administration}
+    
+\end{frame}
+
+
 \section{Database Administration}
 \begin{frame}{Database Administration}
 \subsection{Backup and Restore}
@@ -289,6 +307,11 @@ The MongoDB backup utility is called mongodump; this utility is supplied as part
 \section{MonogDB vs MySQL}
 \begin{frame}{MonogDB vs MySQL}
     
+\end{frame}
+
+\begin{frame}{References}
+    \bibliography{ref}
+    \bibliographystyle{apalike}
 \end{frame}
 
 \end{document}
