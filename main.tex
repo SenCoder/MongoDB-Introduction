@@ -143,21 +143,30 @@
     \end{minipage}
 \end{frame}
 
-\begin{frame}{Insert}
-
+\begin{frame}{CRUD Operations}
+    \begin{minipage}[t]{0.45\textwidth}
+        \scriptsize
+        \begin{Alms*}
+            > db.users.insert(\{"name":"yuansheng"\}) \\
+            > db.users.insert(\{"name":"yuansheng", "age":23\}) \\
+            > db.users.insert(\{"name":"liueh", "job":"programmer"\}) \\
+            > db.users.find().pretty() \\
+            \{ \NI
+                "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
+                "name" : "yuansheng" \\
+            \ND \} \\
+            \{ \NI
+                "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
+                "name" : "yuansheng" \\
+                "age": 23 \\
+            \ND \} \\
+            > db.users.find({"name":"yuansheng"}).pretty() \\
+            > db.users.find({"name":"yuansheng"}).count() \\
+            > db.users.find({"age":23}).pretty() \\
+        \end{Alms*}
+    \end{minipage}
 \end{frame}
 
-\begin{frame}{Delete}
-    
-\end{frame}
-
-\begin{frame}{Update}
-    
-\end{frame}
-
-\begin{frame}{Query}
-    
-\end{frame}
 
 \section{Advanced Queries}
 \begin{frame}
