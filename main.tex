@@ -50,21 +50,28 @@
 \section{Data Model}
 \begin{frame}{Concepts}
 
-\begin{minipage}[t]{0.4\textwidth}
+\begin{minipage}[t]{0.5\textwidth}
+	\scriptsize
 	\begin{Alms*}
+		\\
+		\\
+		\\
 		> Documents \\
 		> Collections \\
 		> Database \\
-		
-%		\A{| Mongodb} \A{| MySql} \\
-%		\A{| Document} \A{| Row} \\
-%		\A{| Field} \A{| Column} \\
-%		\A{| Collection} \A{| Table}\\
-%		\A{| Database} \A{| Database}\\
+		\\
+		\\
+		\\
+		|\K{Mongodb}~~\ | \K{MySql}~~\ | \\
+		|\A {Document}~\ | \A{Row}~~~~\ | \\
+		|\A{Field}~~~~\ | \A{Column}~\ | \\
+		|\A{Collection}| \A{Table}~~\ | \\
+		|\A{Database}~\ | \A{Database}|\\
+		|\A{Index}~~~~\ | \A{Index}~~\ |\\
 	\end{Alms*}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.6\textwidth}
+\begin{minipage}[t]{0.5\textwidth}
 	\scriptsize
 	\begin{Alms*}
 		> \K{show} \V{dbs} \\
@@ -132,9 +139,10 @@
     		models \\
     		projects \\
     		tasks \\
-    		> \V{db}.\V{users}.\V{find}(\{\\
-    		"email":"liueh@tcl.com"\\
-    		\}).\V{pretty}() \\
+    		> \V{db}.\V{users}.\V{find}(\{
+    		 \NI
+    		"email":"liueh@tcl.com"
+    		\ND \}).\V{pretty}() \\
     		\{ \NI
     		"\_id":ObjectId, \\
     		"email":"liueh@tcl.com", \\
@@ -145,12 +153,12 @@
 \end{frame}
 
 \begin{frame}{CRUD Operations}
-    \begin{minipage}[t]{0.45\textwidth}
+    \begin{minipage}[t]{0.7\textwidth}
         \scriptsize
         \begin{Alms*}
             > db.users.insert(\{"name":"yuansheng"\}) \\
-            > db.users.insert(\{"name":"yuansheng", "age":23\}) \\
-            > db.users.insert(\{"name":"liueh", "job":"programmer"\}) \\
+            > db.users.insert(\NI\{"name":"yuansheng", "age":23\}\ND) \\
+            > db.users.insert(\NI\{"name":"liueh", "job":"programmer"\}\ND) \\
             > db.users.find().pretty() \\
             \{ \NI
                 "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
@@ -161,13 +169,70 @@
                 "name" : "yuansheng" \\
                 "age": 23 \\
             \ND \} \\
-            > db.users.find({"name":"yuansheng"}).pretty() \\
-            > db.users.find({"name":"yuansheng"}).count() \\
-            > db.users.find({"age":23}).pretty() \\
+            > db.users.find(\{"name":"yuansheng"\}).pretty() \\
+            > db.users.find(\{"name":"yuansheng"\}).count() \\
+            > db.users.find(\{"age":23\}).pretty() \\
         \end{Alms*}
     \end{minipage}
 \end{frame}
 
+\begin{frame}{CRUD Operations}
+	\begin{minipage}[t]{0.45\textwidth}
+		\scriptsize
+		\begin{Alms*}
+			> db.users.find(\{\NI
+			"name":"yuansheng", "age":23
+			\ND\}).pretty() \\
+			> db.users.find(\{ \NI\$or: [\{age:\{\$gt:18\}\}, \{age:\{\$lt:30\}\}] \ND\})\\
+			> db.users.update(\NI
+			\{"name":"yuansheng"\},\\
+			\{"\$set":\{"name":"yuansheng", "job":"teacher"\}\}
+			\ND )
+			> db.users.remove(\NI
+			\{"name":"yuansheng"\}
+			\ND )
+		\end{Alms*}
+	\end{minipage}
+\end{frame}
+
+\begin{frame}{CRUD Operations}
+	\begin{minipage}[t]{0.48\textwidth}
+		\scriptsize
+		\begin{Alms*}
+			db.createCollection() \\
+			db.collection.drop() \\
+			\\
+			db.collection.insert() \\
+			db.collection.insertOne() \\
+			db.collection.insertMany() \\
+			\\
+			db.collection.find() \\
+			db.collection.findOne() \\
+			db.collection.findMany() \\
+			\\
+			db.update()  \\
+			db.updateOne() \\
+			db.updateMany() \\
+			db.collection.replaceOne() \\
+			\\
+			db.collection.deleteOne() \\
+			db.collection.deleteMany() \\
+			db.collection.remove()
+			
+		\end{Alms*}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.48\textwidth}
+		\scriptsize
+		\begin{Alms*}
+			db.collection.findAndModify() \\
+			db.collection.findOneAndUpdate() \\
+			db.collection.findOneAndDelete() \\
+			db.collection.findOneAndReplace() \\
+			
+		\end{Alms*}
+	\end{minipage}
+\end{frame}
 
 \section{Advanced Queries}
 \begin{frame}
