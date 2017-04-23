@@ -5,6 +5,7 @@
 \usepackage{tikz}
 \usepackage{almslides}
 \usepackage{moresize}
+\usepackage{hyperref}
 
 \usetikzlibrary{chains,decorations.pathmorphing,positioning,fit}
 \usetikzlibrary{decorations.shapes,calc,backgrounds}
@@ -230,7 +231,7 @@
 
 \begin{frame}{GridFS}
 	\begin{minipage}[t]{\textwidth}
-		GridFS\cite{Chodorow2013MongoDB} uses\cite{mongodb} two collections to store files. One collection stores the file chunks, and the other stores file metadata.
+		GridFS\cite{Chodorow2013MongoDB} uses two collections to store files. One collection stores the file chunks, and the other stores file metadata.
 	\end{minipage}
     
     \begin{block}{fs.files}
@@ -301,7 +302,7 @@ The MongoDB backup utility is called mongodump; this utility is supplied as part
 
 \section{Optimization}
 \begin{frame}{Optimization}
-    
+	
 \end{frame}
 
 \section{MonogDB vs MySQL}
@@ -310,8 +311,9 @@ The MongoDB backup utility is called mongodump; this utility is supplied as part
 \end{frame}
 
 \begin{frame}{References}
+	\small
     \bibliography{ref}
-    \bibliographystyle{apalike}
+    \bibliographystyle{plain}
 \end{frame}
 
 \end{document}
