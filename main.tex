@@ -32,8 +32,17 @@
 \section{Introduction}
 \begin{frame}{Introduction}
 	\begin{block}{Document Database}
-		A record in MongoDB is a document, which is a data structure composed of field and value pairs. MongoDB documents are similar to JSON objects. The values of fields may include other documents, arrays, and arrays of documents.
+		A record in MongoDB is a document, which is a data structure composed of field and value pairs. MongoDB documents are similar to JSON objects. 
 	\end{block}
+
+	\begin{block}{Tools}
+		\begin{Alms*}
+			mongo ~~~\    mongoexport ~\ mongooplog ~\ mongos \\
+			mongod ~~\    mongofiles ~~\ mongoperf ~~\ mongostat \\
+			mongodump     mongoimport ~\ mongorestore  mongotop
+		\end{Alms*}
+	\end{block}
+
 	\begin{block}{Key Features}
 		\begin{itemize}
 			\item High Performance
@@ -42,9 +51,7 @@
 			\item Horizontal Scalability
 			\item Support for Multiple Storage Engines
 		\end{itemize}
-		
 	\end{block}
-    
 \end{frame}
 
 \section{Data Model}
@@ -167,7 +174,7 @@
             \{ \NI
                 "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
                 "name" : "yuansheng" \\
-                "age": 23 \\
+                "age": 23
             \ND \} \\
             > db.users.find(\{"name":"yuansheng"\}).pretty() \\
             > db.users.find(\{"name":"yuansheng"\}).count() \\
@@ -180,14 +187,14 @@
 	\begin{minipage}[t]{0.45\textwidth}
 		\scriptsize
 		\begin{Alms*}
-			> db.users.find(\{\NI
-			"name":"yuansheng", "age":23
-			\ND\}).pretty() \\
+			> db.users.find(\NI
+			\{"name":"yuansheng", "age":23\}
+			\ND).pretty() \\
 			> db.users.find(\{ \NI\$or: [\{age:\{\$gt:18\}\}, \{age:\{\$lt:30\}\}] \ND\})\\
 			> db.users.update(\NI
 			\{"name":"yuansheng"\},\\
 			\{"\$set":\{"name":"yuansheng", "job":"teacher"\}\}
-			\ND )
+			\ND)
 			> db.users.remove(\NI
 			\{"name":"yuansheng"\}
 			\ND )
@@ -229,15 +236,94 @@
 			db.collection.findOneAndUpdate() \\
 			db.collection.findOneAndDelete() \\
 			db.collection.findOneAndReplace() \\
-			
 		\end{Alms*}
 	\end{minipage}
 \end{frame}
 
 \section{Advanced Queries}
-\begin{frame}
-    
+\begin{frame}{Advanced Queries}
+	\scriptsize
+	\begin{block}{Specify AND as well as OR Conditions}
+		\begin{Alms*}
+			db.users.find(\NI \{"name":"yuansheng", "age":23\} \ND) \\
+			db.users.find(\NI \{\$or: [\{"name":"yuansheng"\}, \{"age":23\}]\} \ND)
+			db.users.find(\NI \{"role":"user", \{\$or: [\{"name":"yuansheng"\}, \{"age":23\}]\}\} \ND)
+		\end{Alms*}
+	\end{block}
+
+	\begin{block}{Query on Array}
+		\begin{Alms*}
+			db.users.find(\NI \{tags:\{\$all: ["sports", "read", "travle"]\}\} \ND)
+			db.users.find(\NI \{tags: "sports"\} \ND)
+			db.users.find(\NI \{steps: \{\$gt: 8000, \$lt: 16000 \}\} \ND)
+			db.users.find(\NI \{"steps.1": \{\$gt: 25 \}\} \ND)
+			db.users.find(\NI \{steps: \{\$elemMatch: \{\$gt: 8000, \$lt: 16000\}\}\} \ND)
+			db.users.find(\NI \{steps: \{\$size: 7 \}\} \ND)
+		\end{Alms*}
+	\end{block}
+
 \end{frame}
+
+\begin{frame}{Advanced Queries}
+	\scriptsize
+	\begin{block}{Query on Embedded Documents}
+		\begin{Alms*}
+		\end{Alms*}
+	\end{block}
+	
+	\begin{block}{Query an Array of Embedded Documents}
+		content...
+	\end{block}
+\end{frame}
+
+\begin{frame}{Indexs}
+	\scriptsize
+	\begin{Alms*}
+		> db.tasks.find(\NI\{"userid":"liueh@tcl.com"\}
+		\ND).limit(1).explain('executionStats') \\
+		> db.tasks.find(\NI\{"userid":"liueh@tcl.com"\}
+		\ND).explain('executionStats') \\
+		\\
+		> db.tasks.createIndex({"userid":1}) \\
+		> db.tasks.getIndexes() \\
+		> db.tasks.find(\NI\{"userid":"liueh@tcl.com"\}
+		\ND).explain('executionStats') \\
+		\\
+		> db.tasks.createIndex({"userid":1, "name":-1}) \\
+		> db.tasks.dropIndex() \\
+		> db.tasks.dropIndexes()
+	\end{Alms*}
+\end{frame}
+
+\begin{frame}{The Aggregation Framework}
+
+\begin{minipage}[t]{0.3\textwidth}
+	\begin{Alms*}
+	• \$group \\
+	• \$limit \\
+	• \$match \\
+	• \$sort \\
+	• \$unwind \\
+	• \$project \\
+	• \$skip \\
+	• \$out \\
+	• \$redact \\
+	• \$lookup \\
+	\end{Alms*}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.7\textwidth}
+%	\includegraphics[height=\textheight]{Aggregation-Framework}
+%	The aggregation framework in MongoDB represents the ability to perform a selection of matching, grouping,
+%	and transformation operations on data in your collection. This is done by creating a pipeline of aggregation
+%	operations that will be executed in order, first on the data and then each subsequent operation will be on the
+%	results of the previous operation. If you are familiar with the Linux or Unix shell, you will recognize this as
+%	forming a shell pipeline of operations.
+	
+\end{minipage}
+
+\end{frame}
+
 
 \section{Python and MongoDB}
 \begin{frame}{Python and MongoDB}
@@ -356,13 +442,15 @@
 
 \section{Database Administration}
 \begin{frame}{Database Administration}
-\subsection{Backup and Restore}
 The MongoDB backup utility is called mongodump; this utility is supplied as part of the standard distribution.
 \end{frame}
 
-\subsection{Protect your Server with  Authentication}
-\begin{frame}{Database Administration}
+\begin{frame}{Protect your Server with  Authentication}
     
+\end{frame}
+
+\begin{frame}{Monitoring Mongodb}
+
 \end{frame}
 
 \section{Optimization}
