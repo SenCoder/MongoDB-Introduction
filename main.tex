@@ -6,6 +6,8 @@
 \usepackage{almslides}
 \usepackage{moresize}
 \usepackage{hyperref}
+\usepackage{svg}
+\usepackage{amsmath}
 
 \usetikzlibrary{chains,decorations.pathmorphing,positioning,fit}
 \usetikzlibrary{decorations.shapes,calc,backgrounds}
@@ -165,7 +167,7 @@
         \begin{Alms*}
             > db.users.insert(\{"name":"yuansheng"\}) \\
             > db.users.insert(\NI\{"name":"yuansheng", "age":23\}\ND) \\
-            > db.users.insert(\NI\{"name":"liueh", "job":"programmer"\}\ND) \\
+            > db.users.insert(\NI\{"name":"liueh", "job":"student"\}\ND) \\
             > db.users.find().pretty() \\
             \{ \NI
                 "\_id" : ObjectId("58eda18e1d41c860ce59966e"), \\
@@ -193,7 +195,7 @@
 			> db.users.find(\{ \NI\$or: [\{age:\{\$gt:18\}\}, \{age:\{\$lt:30\}\}] \ND\})\\
 			> db.users.update(\NI
 			\{"name":"yuansheng"\},\\
-			\{"\$set":\{"name":"yuansheng", "job":"teacher"\}\}
+			\{"\$set":\{"name":"yuansheng", "job":"programmer"\}\}
 			\ND)
 			> db.users.remove(\NI
 			\{"name":"yuansheng"\}
@@ -264,16 +266,38 @@
 
 \end{frame}
 
-\begin{frame}{Advanced Queries}
+\begin{frame}{Query on Embedded Documents}
 	\scriptsize
-	\begin{block}{Query on Embedded Documents}
-		\begin{Alms*}
-		\end{Alms*}
-	\end{block}
-	
-	\begin{block}{Query an Array of Embedded Documents}
-		content...
-	\end{block}
+	\begin{Alms*}
+		> db.inventory.insertMany([ \NI
+		\{item:"journal", qty:25, size:\{h:14, w:21, uom:"cm"\}, status:"A"\}, \\
+		\{item:"notebook", qty:50, size:\{h:8.5, w:11, uom:"in"\}, status:"A"\}, \\
+		\{item:"paper", qty:100, size:\{h:8.5, w:11, uom:"in"\}, status:"D"\}, \\
+		\{item:"planner", qty:75, size:\{h:22.5, w:30, uom:"cm"\}, status:"D"\}, \\
+		\{item:"postcard", qty:45, size:\{h:10, w:15.5, uom:"cm"\}, status:"A"\}
+		\ND]);\\
+		> db.inventory.find(\{size:\{h: 14, w: 21, uom: "cm"\}\}) \\
+		> db.inventory.find(\{"size.uom":"in"\}) \\
+		> db.inventory.find(\{"size.h":\{\$lt:15\}\}) \\
+		> db.inventory.find(\{"size.h":\{\$lt:15\}, "size.uom":"in", status:"D"\})
+	\end{Alms*}
+\end{frame}
+
+\begin{frame}{Query an Array of Embedded Documents}
+\scriptsize
+\begin{Alms*}
+	> db.inventory.insertMany([\NI
+	\{ item: "journal", instock:[\NI
+		\{warehouse: "A", qty: 5\}, \{warehouse: "C", qty: 15\}\ND]\},\\
+	\{item: "notebook", instock:[\NI\{warehouse: "C", qty: 5\}\ND]\},\\
+	\{item: "paper", instock:[\NI\{warehouse: "A", qty: 60\}, \{ warehouse: "B", qty: 15\}\ND]\},\\
+	\{item: "postcard", instock:[\NI\{warehouse: "B", qty: 15\}, \{ warehouse: "C", qty: 35\}\ND]\}
+	\ND]);\\
+	> db.inventory.find(\{"instock":\{warehouse:"A", qty:5\}\})\\
+	> db.inventory.find(\{'instock.0.qty':\{\$lte:20\}\})\\
+	> db.inventory.find(\{'instock.qty':\{\$lte:20\}\})\\
+	> db.inventory.find(\{"instock":\{\$elemMatch:\{qty:5, warehouse:"A"\}\}\})
+\end{Alms*}
 \end{frame}
 
 \begin{frame}{Indexs}
@@ -295,6 +319,7 @@
 	\end{Alms*}
 \end{frame}
 
+\section{Aggregation}
 \begin{frame}{The Aggregation Framework}
 
 \begin{minipage}[t]{0.3\textwidth}
@@ -324,37 +349,68 @@
 
 \end{frame}
 
+\begin{frame}{The Aggregation Framework}
 
-\section{Python and MongoDB}
-\begin{frame}{Python and MongoDB}
-\scriptsize
-\begin{Alms*}
-	\T{int} \V{udp\_sendmsg}(\T{struct sock *}\V{sk},
-	\T{struct msghdr *}\V{msg}, \textrm{\ldots}) \\
-	\{ \NI
-	\vdots \\
-	\tikzanchor{lock 1}%
-	\only<8->{\highlight<8-9>{\V{lock\_sock}(\V{sk});} \\}%
-	\K{if} \highlight<6-8>{(\V{unlikely}(\V{sk}$→$\V{pending}))} \{ \NI
-	\highlight<5>{
-		\CCOM{Socket is already corked while preparing it} \\
-		\CCOM{\ldots\,which is an evident application bug. --ANK}
-	} \\
-	\only<9->{\highlight<9>{\V{release\_sock}(\V{sk});} \\}%
-	\V{LIMIT\_NETDEBUG}(\V{KERN\_DEBUG} \S{udp cork app bug 2}); \\
-	\highlight<6>{\K{return} -\D{EINVAL};}
-	\ND\} \\[4pt]
-	\tikzanchor{lock 2}%
-	\only<-7>{\highlight<2,7>{\V{lock\_sock}(\V{sk});} \\}%
-	\highlight<3>{%
-		\V{ret} = \V{ip\_append\_data}(\V{sk}, \V{msg}$→$\V{msg\_iov},
-		\V{ulen}, \textrm{\ldots});} \\
-	\vdots \\
-	\highlight<4>{\V{release\_sock}(\V{sk});} \\
-	\K{return} \V{ret};
-	\ND\}
-\end{Alms*}
+	\scriptsize
+	\begin{Alms*}
+	db.users.aggregate(\NI
+	\{"\$group":\{"\_id":"\$role", "count":\{"\$sum": 1\}\}\}, \\
+	\{"\$sort":\{"count":-1\}\}, \\
+	\{"\$limit":2\}
+	\ND )
+	\end{Alms*}
+
 \end{frame}
+
+
+\begin{frame}{The Aggregation Framework}
+
+\begin{Alms*}
+	• \$group \\
+	• \$limit \\
+	• \$match \\
+	• \$sort \\
+	• \$unwind \\
+	• \$project \\
+	• \$skip \\
+	• \$out \\
+	• \$redact \\
+	• \$lookup \\
+\end{Alms*}
+
+\end{frame}
+
+
+%\section{Python and MongoDB}
+%\begin{frame}{Python and MongoDB}
+%\scriptsize
+%\begin{Alms*}
+%	\T{int} \V{udp\_sendmsg}(\T{struct sock *}\V{sk},
+%	\T{struct msghdr *}\V{msg}, \textrm{\ldots}) \\
+%	\{ \NI
+%	\vdots \\
+%	\tikzanchor{lock 1}%
+%	\only<8->{\highlight<8-9>{\V{lock\_sock}(\V{sk});} \\}%
+%	\K{if} \highlight<6-8>{(\V{unlikely}(\V{sk}$→$\V{pending}))} \{ \NI
+%	\highlight<5>{
+%		\CCOM{Socket is already corked while preparing it} \\
+%		\CCOM{\ldots\,which is an evident application bug. --ANK}
+%	} \\
+%	\only<9->{\highlight<9>{\V{release\_sock}(\V{sk});} \\}%
+%	\V{LIMIT\_NETDEBUG}(\V{KERN\_DEBUG} \S{udp cork app bug 2}); \\
+%	\highlight<6>{\K{return} -\D{EINVAL};}
+%	\ND\} \\[4pt]
+%	\tikzanchor{lock 2}%
+%	\only<-7>{\highlight<2,7>{\V{lock\_sock}(\V{sk});} \\}%
+%	\highlight<3>{%
+%		\V{ret} = \V{ip\_append\_data}(\V{sk}, \V{msg}$→$\V{msg\_iov},
+%		\V{ulen}, \textrm{\ldots});} \\
+%	\vdots \\
+%	\highlight<4>{\V{release\_sock}(\V{sk});} \\
+%	\K{return} \V{ret};
+%	\ND\}
+%\end{Alms*}
+%\end{frame}
 
 \section{GridFS}
 \begin{frame}{GridFS}
@@ -429,38 +485,216 @@
     A replica set in MongoDB is a group of mongod processes that maintain the same dataset. With multiple copies of data on different database servers, replication provides a level of fault tolerance against the loss of a single database server.
 \end{frame}
 
+
 \subsection{How Replication Works}
+\begin{frame}{Start Replication}
+\scriptsize
+\begin{Alms*}
+	> replicaSet = new ReplSetTest({"nodes":3}) \\
+	> replicaSet.startSet() \\
+	> replicaSet.initiate() \\
+	\\
+	> conn1 = new Mongo("localhost:20000") \\
+	> primaryDB = conn1.getDB("test") \\
+	> primaryDB.isMaster() \\
+	> conn2 = new Mongo("localhost:20001") \\
+	> secondaryDB = conn2.getDB("firebase") \\
+	> secondaryDB.users.find() \\
+	> secondaryDB.users.insert(...) \\
+	> conn2.setSlaveOk() \\
+	> primaryDB.adminCommand(\{"shutdown": 1\}) \\
+	
+	> replicaSet.stopSet() \\
+
+\end{Alms*}
+
+\end{frame}
+
 \begin{frame}{How Replication Works}
-    
+
 \end{frame}
 
 \subsection{Replica Set Administration}
 \begin{frame}{Replica Set Administration}
-    
+    \scriptsize
+    \begin{Alms*}
+    	\$ ssh server-1 \\
+    	\$ mongod --replSet spock --fork -f /etc/mongod.conf \\
+    	\$ ssh server-2 \\
+    	\$ mongod --replSet spock --fork -f /etc/mongod.conf \\
+    	\$ ssh server-3 \\
+    	\$ mongod --replSet spock --fork -f /etc/mongod.conf \\
+    	
+    	\$ ssh server-1 \\
+    	> config = \{"\_id":"spock", \\
+    	"members":[\NI
+    	\{"\_id":0, "host":"server-1:27017"\}, \\
+    	\{"\_id":1, "host":"server-2:27017"\}, \\
+    	\{"\_id":2, "host":"server-3:27017"\}
+    	\ND]\} \\
+    	> rs.initiate(config) \\
+    	> rs.add("server-4:27017") \\
+    	> rs.remove("server-4:27017") \\
+    	> var config = rs.config() \\
+    	> rs.reconfig(config)
+    	
+    \end{Alms*}
 \end{frame}
 
 
 \section{Database Administration}
-\begin{frame}{Database Administration}
-The MongoDB backup utility is called mongodump; this utility is supplied as part of the standard distribution.
+\begin{frame}{Backup and Restore}
+The MongoDB backup utility is called mongodump; this utility is supplied as part of the standard distribution. And mongo restore is used to restore database from the backup file.
+
+\begin{block}{mongodump}
+	\scriptsize
+	\begin{Alms*}
+		mkdir testmongobackup \\
+		cd testmongobackup \\
+		mongodump \\
+		mongodump -d database \\
+		mongodump -d database-c collection \\
+	\end{Alms*}
+\end{block}
+
+\begin{block}{mongorestore}
+	\scriptsize
+	\begin{Alms*}
+		cd testmongobackup \\
+		mongorestore -d database --drop \\
+		mongorestore -d database -c collection --drop \\
+	\end{Alms*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Import and Export}
+	The mongoimport utility can load data from any of three file formats:
+	
+	\begin{itemize}
+		\item CSV
+		\item TSV
+		\item JSON
+	\end{itemize}
+	
+	\begin{block}{mongoimport}
+		\scriptsize
+		\begin{Alms*}
+			mongoimport --help \\
+			mongoimport -d test -c students --type csv \NI --headerline --file students-csv.dat \ND
+			
+		\end{Alms*}
+	\end{block}
+
+	\begin{block}{mongoexport}
+		\scriptsize
+		\begin{Alms*}
+			monogexport --help \\
+			mongoexport -d test -c students -o students.dat \\
+			
+			mongoexport -d test -c students --csv \NI -f classid,name,age -o students-csv.dat \ND	
+		\end{Alms*}
+	\end{block}
+
 \end{frame}
 
 \begin{frame}{Protect your Server with  Authentication}
+    MongoDB supports a role-based access control authentication model with predefined system roles and user-defined custom roles.
     
+    \begin{minipage}[t]{0.64\textwidth}
+    	\scriptsize
+    	\begin{Alms*}
+    		> use admin \\
+    		> db.createUser(\{\NI
+    		"user":"admin", \\
+    		"pwd":"pass", \\
+    		"roles":[ \NI
+    		\{role:"readWrite", db:"admin"\}, \\
+    		\{role:"userAdminAnyDatabase", \\db:"admin"\}
+    		\ND]
+    		\ND \}) \\
+    		\$ mongod --auth \\
+    		> use admin \\
+    		> show collections \\
+    		> db.auth("admin", "pass") \\
+    		> db.getUsers() \\
+    		> use firebase
+    		
+    	\end{Alms*}
+    \end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.35\textwidth}
+		\scriptsize
+		\begin{block}{User Roles}
+			\begin{itemize}
+				\item read
+				\item readWrite
+				\item userAdmin
+				\item readAnyDatabase
+				\item readWriteAnyDatabase
+				\item userAdminAnyDatabase
+				\item dbAdminAnyDatabase
+				\item clusterAdmin
+			\end{itemize}
+		\end{block}
+	\end{minipage}
 \end{frame}
 
-\begin{frame}{Monitoring Mongodb}
-
+\begin{frame}{User Manage}
+	\begin{minipage}[t]{0.48\textwidth}
+		\begin{block}{User Management Methods}
+			\scriptsize
+			\begin{Alms*}
+				db.auth() \\
+				db.createUser()	\\
+				db.updateUser()	\\
+				db.changeUserPassword()	\\
+				db.removeUser()	\\
+				db.dropAllUsers() \\
+				db.dropUser() \\
+				db.grantRolesToUser() \\
+				db.revokeRolesFromUser() \\
+				db.getUser() \\
+				db.getUsers() \\
+			\end{Alms*}
+		\end{block}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.48\textwidth}
+		\begin{block}{Role Management Methods}
+			\scriptsize
+			\begin{Alms*}
+				db.createRole()	\\
+				db.updateRole()	\\
+				db.dropRole() \\
+				db.dropAllRoles() \\
+				db.grantPrivilegesToRole()	\\
+				db.revokePrivilegesFromRole() \\
+				db.grantRolesToRole() \\
+				db.revokeRolesFromRole() \\
+				db.getRole() \\
+				db.getRoles() \\
+			\end{Alms*}
+		\end{block}
+	\end{minipage}
 \end{frame}
 
-\section{Optimization}
-\begin{frame}{Optimization}
+\begin{frame}{Other Tools}
+	\begin{block}{Tools}
+		\begin{Alms*}
+			mongo ~~~\    mongoexport ~\ \T{mongooplog} ~\ \T{mongos} \\
+			mongod ~~\    mongofiles ~~\ \T{mongoperf} ~~\ \T{mongostat} \\
+			mongodump     mongoimport ~\ mongorestore  \T{mongotop}
+		\end{Alms*}
 	
-\end{frame}
+	\begin{description}
+		\item[mongooplog] Pulls oplog entries from another mongod instance.
+		\item[mongos] MongoDB shard process.
+		\item[mongoperf] Check disk I/O performance.
+		\item[mongostat] Returns counters of database operation. 
+		\item[mongotop] Tracks/reports MongoDB read/write activities.
+	\end{description}
+	\end{block}
 
-\section{MonogDB vs MySQL}
-\begin{frame}{MonogDB vs MySQL}
-    
 \end{frame}
 
 \begin{frame}{References}
