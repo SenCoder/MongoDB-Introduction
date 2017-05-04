@@ -110,10 +110,6 @@
 
 \end{frame}
 
-\begin{frame}{Concepts}
-	
-\end{frame}
-
 \begin{frame}{Data Types}
     \begin{itemize}
         \item Null
@@ -338,18 +334,24 @@
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.7\textwidth}
-%	\includegraphics[height=\textheight]{Aggregation-Framework}
-%	The aggregation framework in MongoDB represents the ability to perform a selection of matching, grouping,
-%	and transformation operations on data in your collection. This is done by creating a pipeline of aggregation
-%	operations that will be executed in order, first on the data and then each subsequent operation will be on the
-%	results of the previous operation. If you are familiar with the Linux or Unix shell, you will recognize this as
-%	forming a shell pipeline of operations.
+    \begin{figure}
+        \centering
+        \includegraphics[height=0.6\textheight]{Aggregation-Framework.png}
+    \end{figure}
+
 	
 \end{minipage}
 
 \end{frame}
 
 \begin{frame}{The Aggregation Framework}
+
+   	The aggregation framework in MongoDB represents the ability to perform a selection of matching, grouping,
+   	and transformation operations on data in your collection. This is done by creating a pipeline of aggregation
+   	operations that will be executed in order, first on the data and then each subsequent operation will be on the
+   	results of the previous operation. If you are familiar with the Linux or Unix shell, you will recognize this as
+   	forming a shell pipeline of operations.
+    \vspace{1cm}
 
 	\scriptsize
 	\begin{Alms*}
@@ -363,22 +365,22 @@
 \end{frame}
 
 
-\begin{frame}{The Aggregation Framework}
-
-\begin{Alms*}
-	• \$group \\
-	• \$limit \\
-	• \$match \\
-	• \$sort \\
-	• \$unwind \\
-	• \$project \\
-	• \$skip \\
-	• \$out \\
-	• \$redact \\
-	• \$lookup \\
-\end{Alms*}
-
-\end{frame}
+%\begin{frame}{The Aggregation Framework}
+%
+%\begin{Alms*}
+%	• \$group \\
+%	• \$limit \\
+%	• \$match \\
+%	• \$sort \\
+%	• \$unwind \\
+%	• \$project \\
+%	• \$skip \\
+%	• \$out \\
+%	• \$redact \\
+%	• \$lookup \\
+%\end{Alms*}
+%
+%\end{frame}
 
 
 %\section{Python and MongoDB}
